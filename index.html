@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Mobile-first viewport tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PraxisScreener</title>
+  
+  <!-- Single CDN link for Google Material Symbols -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24..48,100..700,0..1,-50..200">
+  
+  <!-- High-contrast sunlight-ready stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Fixed High-Contrast App Header -->
+    <header class="app-header">
+      <div class="brand-wrapper">
+        <img src="assets/logo.png" alt="PraxisScreener" class="brand-logo-img">
+        <span class="brand-title">PraxisScreener</span>
+      </div>
+      <div class="header-actions">
+        <!-- Language Selector -->
+        <div class="lang-selector-wrapper">
+          <span class="material-symbols-outlined">translate</span>
+          <select id="lang-select" class="lang-select" aria-label="Language">
+            <option value="en">EN</option>
+            <option value="hi">हिंदी</option>
+            <option value="as">অসমীয়া</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="app-nav">
+      <button type="button" id="nav-intake" class="nav-tab nav-active">
+        <span class="material-symbols-outlined">assignment</span>
+        <span data-i18n="nav_intake">Intake</span>
+      </button>
+      <button type="button" id="nav-history" class="nav-tab">
+        <span class="material-symbols-outlined">history</span>
+        <span data-i18n="nav_history">History</span>
+      </button>
+    </nav>
+
+    <!-- ====================================================================
+         SCREEN 1: CLINICAL INTAKE (NICE NG226)
+         ==================================================================== -->
+    <main id="screen-intake" class="screen active">
+      <div class="screen-header">
+        <div class="screen-title-row">
+          <span class="material-symbols-outlined screen-icon">assignment_add</span>
+          <h1 class="screen-title" data-i18n="intake_title">Clinical Intake</h1>
+        </div>
+        <p class="screen-subtitle" data-i18n="intake_subtitle">NICE Guideline NG226 Assessment</p>
+      </div>
+
+      <form id="form-intake" novalidate>
+        <!-- Item 1: Patient Age -->
+        <div class="form-group">
+          <div class="form-label-row">
+            <span class="material-symbols-outlined form-label-icon">person</span>
+            <label for="input-age" class="form-label-text" data-i18n="age_label">Patient Age (years)</label>
+          </div>
+          <div class="text-input-wrapper">
+            <input 
+              type="number" 
+              id="input-age" 
+              class="number-input" 
+              min="18" 
+              max="115" 
+              placeholder="Enter age (e.g. 52)" 
+              data-i18n-placeholder="age_placeholder" 
+              required
+            >
+          </div>
+          <p class="form-hint" data-i18n="age_hint">Age 45 or older is a primary NICE clinical indicator</p>
+        </div>
+
+        <!-- Item 2: Activity-Related Joint Pain -->
+        <div class="form-group">
+          <div class="form-label-row">
+            <span class="material-symbols-outlined form-label-icon">directions_walk</span>
+            <span class="form-label-text" data-i18n="pain_label">Is your joint pain worse with activity or movement?</span>
+          </div>
+          <div class="radio-cards-row">
+            <label class="radio-card">
+              <input type="radio" name="pain" id="pain-yes" value="yes" required>
+              <div class="radio-card-content">
+                <span class="radio-indicator"></span>
+                <span class="radio-label" data-i18n="yes">Yes</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="pain" id="pain-no" value="no" required>
+              <div class="radio-card-content">
+                <span class="radio-indicator"></span>
+                <span class="radio-label" data-i18n="no">No</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Item 3: Morning Joint Stiffness Duration (Strict 30-min threshold) -->
+        <div class="form-group">
+          <div class="form-label-row">
+            <span class="material-symbols-outlined form-label-icon">schedule</span>
+            <span class="form-label-text" data-i18n="stiffness_label">How long does your morning joint stiffness usually last?</span>
+          </div>
+          <div class="radio-cards-group">
+            <label class="radio-card">
+              <input type="radio" name="stiffness" id="stiff-under" value="under_30" required>
+              <div class="radio-card-content">
+                <span class="radio-indicator"></span>
+                <span class="radio-label" data-i18n="stiffness_under_30">Less than 30 minutes</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="stiffness" id="stiff-over" value="over_30" required>
+              <div class="radio-card-content">
+                <span class="radio-indicator"></span>
+                <span class="radio-label" data-i18n="stiffness_over_30">30 minutes or longer</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Item 4: Separately Labeled Supplementary Functional Item -->
+        <div class="form-group">
+          <div class="supplementary-badge">
+            <span class="material-symbols-outlined">info</span>
+            <span data-i18n="supplementary_badge">Supplementary Functional Item</span>
+          </div>
+          <div class="form-label-row">
+            <span class="material-symbols-outlined form-label-icon">stairs</span>
+            <span class="form-label-text" data-i18n="squat_label">Can you squat down or climb a few stairs without much difficulty?</span>
+          </div>
+          <div class="radio-cards-group">
+            <label class="radio-card">
+              <input type="radio" name="squat" id="squat-none" value="none" required>
+              <div class="radio-card-content">
+                <span class="radio-indicator"></span>
+                <span class="radio-label" data-i18n="difficulty_none">Yes (No difficulty)</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="squat" id="squat-some" value="some" required>
+              <div class="radio-card-content">
+                <span class="radio-indicator"></span>
+                <span class="radio-label" data-i18n="difficulty_some">Some difficulty</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="squat" id="squat-unable" value="unable" required>
+              <div class="radio-card-content">
+                <span class="radio-indicator"></span>
+                <span class="radio-label" data-i18n="difficulty_unable">No (Unable or severe difficulty)</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Validation error alert -->
+        <div id="intake-error" class="form-error-msg hidden">
+          <span class="material-symbols-outlined">error</span>
+          <span data-i18n="validation_fill_all">Please complete all fields to proceed.</span>
+        </div>
+
+        <!-- Large touch-target Next Button in Bottom 1/3 -->
+        <div class="action-bottom-container">
+          <button type="submit" class="btn-primary">
+            <span class="material-symbols-outlined">arrow_forward</span>
+            <span data-i18n="btn_next_movement">Next: Movement Test</span>
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <!-- ====================================================================
+         SCREEN 2: MOVEMENT TEST (OARSI 30-Second Chair Stand)
+         ==================================================================== -->
+    <section id="screen-movement" class="screen">
+      <div class="screen-header">
+        <div class="screen-title-row">
+          <span class="material-symbols-outlined screen-icon">chair</span>
+          <h1 class="screen-title" data-i18n="movement_title">30-Second Chair Stand Test</h1>
+        </div>
+        <p class="screen-subtitle" data-i18n="protocol_citation">OARSI Protocol (Dobson et al., 2013)</p>
+      </div>
+
+      <!-- Step 1: Pre-Permission Explainer -->
+      <div id="movement-step-permission" class="movement-step-box">
+        <span class="material-symbols-outlined movement-icon-hero">photo_camera</span>
+        <h2 class="form-label-text" data-i18n="camera_perm_title">Camera Access Required</h2>
+        <p class="screen-subtitle" style="margin-top: 8px;" data-i18n="camera_perm_desc">
+          Camera access is needed to observe and count chair stand movements in real time.
+        </p>
+
+        <div class="https-notice-box">
+          <span class="material-symbols-outlined">lock</span>
+          <span data-i18n="camera_https_notice">Camera access requires HTTPS or localhost on mobile phones.</span>
+        </div>
+
+        <div class="action-bottom-container">
+          <button type="button" id="btn-enable-camera" class="btn-primary">
+            <span class="material-symbols-outlined">videocam</span>
+            <span data-i18n="btn_allow_camera">Enable Rear Camera</span>
+          </button>
+          <button type="button" id="btn-demo-mode" class="btn-secondary">
+            <span class="material-symbols-outlined">smart_toy</span>
+            <span data-i18n="btn_use_demo">Try Demo Simulation</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Protocol Instructions & Arm Disclosure -->
+      <div id="movement-step-instructions" class="movement-step-box hidden">
+        <h2 class="form-label-text" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span class="material-symbols-outlined" style="color: var(--brand-blue)">checklist</span>
+          <span data-i18n="instructions_title">Test Instructions</span>
+        </h2>
+
+        <ul class="instruction-list">
+          <li>
+            <span class="inst-num">1</span>
+            <span data-i18n="inst_1">Sit in a sturdy chair with no armrests.</span>
+          </li>
+          <li>
+            <span class="inst-num">2</span>
+            <span data-i18n="inst_2">Cross your arms firmly over your chest.</span>
+          </li>
+          <li>
+            <span class="inst-num">3</span>
+            <span data-i18n="inst_3">Stand fully upright and sit back down as many times as possible in 30 seconds.</span>
+          </li>
+        </ul>
+
+        <!-- Honest arm-push-off disclosure line -->
+        <div class="disclosure-box">
+          <span class="material-symbols-outlined disclosure-icon">info</span>
+          <span class="disclosure-text" data-i18n="arm_disclosure">
+            This version can't detect if arms were used to help stand up — try to keep arms crossed for an accurate count.
+          </span>
+        </div>
+
+        <div class="action-bottom-container">
+          <button type="button" id="btn-start-test" class="btn-primary">
+            <span class="material-symbols-outlined">play_arrow</span>
+            <span data-i18n="btn_start_test">Start 30-Second Test</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Live Test Recording & Pose Tracking -->
+      <div id="movement-step-live" class="hidden">
+        <div class="live-camera-container">
+          <!-- Non-mirrored rear camera video -->
+          <video id="live-video" class="live-video" playsinline muted autoplay></video>
+          <canvas id="live-canvas" class="live-canvas"></canvas>
+
+          <!-- Top Live HUD -->
+          <div class="live-hud-top">
+            <div class="hud-pill hud-pill-timer">
+              <span class="material-symbols-outlined">timer</span>
+              <span id="live-timer">30s</span>
+            </div>
+            <div class="hud-pill hud-pill-reps">
+              <span class="material-symbols-outlined">fitness_center</span>
+              <span id="live-reps">0</span>
+            </div>
+          </div>
+
+          <!-- Bottom Live HUD -->
+          <div class="live-hud-bottom">
+            <div id="live-status" class="status-pill status-seated">Seated</div>
+            <div class="angle-badge">
+              <span id="live-angle">--°</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="movement-hud-status" style="font-size: 0.9rem; font-weight: 700; color: var(--brand-blue); text-align: center; margin-top: 8px;"></div>
+
+        <div class="action-bottom-container" style="padding-top: 16px;">
+          <button type="button" id="btn-stop-test" class="btn-secondary" style="border-color: #fca5a5; color: #b91c1c;">
+            <span class="material-symbols-outlined">stop_circle</span>
+            <span data-i18n="btn_stop_test">Finish Test Early</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 4: Camera Error / Retry -->
+      <div id="movement-step-error" class="movement-step-box hidden">
+        <span class="material-symbols-outlined movement-icon-hero" style="color: #b91c1c;">no_photography</span>
+        <h2 class="form-label-text" data-i18n="camera_error_title">Camera Access Issue</h2>
+        <p class="screen-subtitle" style="margin-top: 8px;" data-i18n="camera_error_desc">
+          Could not access the rear camera. Please verify camera permissions in browser settings.
+        </p>
+
+        <div class="https-notice-box">
+          <span class="material-symbols-outlined">lock</span>
+          <span data-i18n="camera_https_notice">Camera access requires HTTPS or localhost on mobile phones.</span>
+        </div>
+
+        <div class="action-bottom-container">
+          <button type="button" id="btn-retry-camera" class="btn-primary">
+            <span class="material-symbols-outlined">refresh</span>
+            <span data-i18n="btn_retry_camera">Retry Camera</span>
+          </button>
+          <button type="button" id="btn-demo-live" class="btn-secondary">
+            <span class="material-symbols-outlined">smart_toy</span>
+            <span data-i18n="btn_use_demo">Try Demo Simulation</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 3: SCREENING RESULTS
+         ==================================================================== -->
+    <section id="screen-results" class="screen">
+      <div class="screen-header">
+        <div class="screen-title-row">
+          <span class="material-symbols-outlined screen-icon">clinical_notes</span>
+          <h1 class="screen-title" data-i18n="results_title">Screening Results</h1>
+        </div>
+      </div>
+
+      <!-- Risk Tier Banner Card with Distinct Tier Icon -->
+      <div id="result-card" class="result-banner tier-low">
+        <span id="result-tier-icon" class="material-symbols-outlined result-tier-icon">check_circle</span>
+        <h2 id="result-tier-text" class="result-tier-title">Low Risk</h2>
+        <!-- Primary Rep Count Display -->
+        <p id="result-stands-text" class="result-stands-prominent">12 stands in 30 seconds</p>
+      </div>
+
+      <!-- 2-3 Short Clinical Findings -->
+      <div class="results-section-card">
+        <div class="results-section-header">
+          <span class="material-symbols-outlined" style="color: var(--brand-blue)">fact_check</span>
+          <h3 data-i18n="findings_title">Key Clinical Findings</h3>
+        </div>
+        <ul id="findings-list" class="findings-list"></ul>
+      </div>
+
+      <!-- NICE NG226 Preventative Guidance -->
+      <div class="results-section-card">
+        <div class="results-section-header">
+          <span class="material-symbols-outlined" style="color: #15803d">health_and_safety</span>
+          <h3 data-i18n="preventive_title">Preventative Guidance (NICE NG226)</h3>
+        </div>
+        <ul id="guidance-list" class="guidance-list"></ul>
+      </div>
+
+      <!-- Supporting Biomechanical Signal -->
+      <div class="results-section-card">
+        <div class="results-section-header">
+          <span class="material-symbols-outlined" style="color: var(--brand-navy)">insights</span>
+          <h3 data-i18n="metrics_title">Biomechanical Summary</h3>
+        </div>
+        <div class="biomech-grid">
+          <div class="biomech-tile">
+            <span class="biomech-label" data-i18n="metric_rom">ROM</span>
+            <div id="metric-rom-val" class="biomech-val">--°</div>
+          </div>
+          <div class="biomech-tile">
+            <span class="biomech-label" data-i18n="metric_smoothness">Smoothness</span>
+            <div id="metric-smoothness-val" class="biomech-val">--°/f</div>
+          </div>
+          <div class="biomech-tile">
+            <span class="biomech-label" data-i18n="metric_ext_flex">Max / Min</span>
+            <div id="metric-angles-val" class="biomech-val">--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Action Buttons -->
+      <div class="action-bottom-container">
+        <button type="button" id="btn-save-record" class="btn-primary">
+          <span class="material-symbols-outlined">save</span>
+          <span data-i18n="btn_save_record">Save to History</span>
+        </button>
+        <button type="button" id="btn-new-screening" class="btn-secondary">
+          <span class="material-symbols-outlined">add_circle</span>
+          <span data-i18n="btn_new_screening">New Screening</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 4: SCREENING HISTORY
+         ==================================================================== -->
+    <section id="screen-history" class="screen">
+      <div class="screen-header">
+        <div class="screen-title-row">
+          <span class="material-symbols-outlined screen-icon">history</span>
+          <h1 class="screen-title" data-i18n="history_title">Saved Screenings</h1>
+        </div>
+      </div>
+
+      <div id="history-empty" class="history-empty">
+        <span class="material-symbols-outlined">folder_open</span>
+        <p data-i18n="history_empty">No screening records stored on this device yet.</p>
+      </div>
+
+      <div id="history-list" class="history-list"></div>
+
+      <div class="action-bottom-container">
+        <button type="button" id="btn-clear-history" class="btn-secondary hidden" style="border-color: #cbd5e1; color: var(--text-muted);">
+          <span class="material-symbols-outlined">delete_sweep</span>
+          <span data-i18n="history_clear_all">Clear History</span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Application Logic Modules -->
+  <script src="js/translations.js"></script>
+  <script src="js/scoring.js"></script>
+  <script src="js/movement.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
