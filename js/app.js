@@ -171,6 +171,13 @@
       });
     }
 
+    const btnGuidePerm = document.getElementById('btn-guide-perm');
+    if (btnGuidePerm) {
+      btnGuidePerm.addEventListener('click', () => {
+        if (guideModal) guideModal.classList.remove('hidden');
+      });
+    }
+
     const closeGuide = () => {
       if (guideModal) guideModal.classList.add('hidden');
     };
