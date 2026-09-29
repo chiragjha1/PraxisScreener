@@ -36,6 +36,12 @@
   // Language buttons
   const langSelect = document.getElementById('lang-select');
 
+  // Screener Guide Modal Elements
+  const btnOpenGuide = document.getElementById('btn-open-guide');
+  const btnCloseGuide = document.getElementById('btn-close-guide');
+  const btnCloseGuideFooter = document.getElementById('btn-close-guide-footer');
+  const guideModal = document.getElementById('guide-modal');
+
   // Intake Form Elements
   const formIntake = document.getElementById('form-intake');
   const inputAge = document.getElementById('input-age');
@@ -67,6 +73,8 @@
   const repsDisplay = document.getElementById('live-reps');
   const angleDisplay = document.getElementById('live-angle');
   const statusDisplay = document.getElementById('live-status');
+  const liveGuidancePill = document.getElementById('live-guidance-pill');
+  const liveGuidanceText = document.getElementById('live-guidance-text');
 
   // Results Screen Elements
   const resultCard = document.getElementById('result-card');
@@ -91,21 +99,18 @@
   // INITIALIZATION
   // ==========================================================================
   function init() {
-    // Check saved language preference or default to English
     const savedLang = localStorage.getItem('praxisscreener_lang') || 'en';
     setLanguage(savedLang);
 
-    // Setup Event Listeners
     setupNavigationListeners();
+    setupGuideModalListeners();
     setupIntakeListeners();
     setupMovementListeners();
     setupResultListeners();
     setupHistoryListeners();
 
-    // Resize canvas to match video
     window.addEventListener('resize', syncCanvasDimensions);
 
-    // Initial screen
     showScreen('screen-intake');
   }
 
@@ -124,17 +129,14 @@
       window.scrollTo(0, 0);
     }
 
-    // Stop active camera when navigating away from movement test
     if (screenId !== 'screen-movement' && state.testController) {
       state.testController.stopCamera();
     }
 
-    // Refresh history if opening history screen
     if (screenId === 'screen-history') {
       renderHistoryList();
     }
 
-    // Update nav bar active state
     if (navBtns.intake) navBtns.intake.classList.toggle('nav-active', screenId === 'screen-intake');
     if (navBtns.history) navBtns.history.classList.toggle('nav-active', screenId === 'screen-history');
   }
@@ -160,6 +162,30 @@
   }
 
   // ==========================================================================
+  // SCREENER GUIDE MODAL CONTROLLER
+  // ==========================================================================
+  function setupGuideModalListeners() {
+    if (btnOpenGuide) {
+      btnOpenGuide.addEventListener('click', () => {
+        if (guideModal) guideModal.classList.remove('hidden');
+      });
+    }
+
+    const closeGuide = () => {
+      if (guideModal) guideModal.classList.add('hidden');
+    };
+
+    if (btnCloseGuide) btnCloseGuide.addEventListener('click', closeGuide);
+    if (btnCloseGuideFooter) btnCloseGuideFooter.addEventListener('click', closeGuide);
+
+    if (guideModal) {
+      guideModal.addEventListener('click', (e) => {
+        if (e.target === guideModal) closeGuide();
+      });
+    }
+  }
+
+  // ==========================================================================
   // MULTI-LANGUAGE LOCALIZATION
   // ==========================================================================
   function setLanguage(lang) {
@@ -173,7 +199,6 @@
 
     const dict = translations[lang];
 
-    // Update static elements with data-i18n
     document.querySelectorAll('[data-i18n]').forEach((elem) => {
       const key = elem.getAttribute('data-i18n');
       if (dict[key]) {
@@ -181,7 +206,6 @@
       }
     });
 
-    // Update placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach((elem) => {
       const key = elem.getAttribute('data-i18n-placeholder');
       if (dict[key]) {
@@ -189,7 +213,6 @@
       }
     });
 
-    // If on results screen, re-render to localize reasons
     if (state.currentResult && state.currentScreen === 'screen-results') {
       renderResults(state.currentResult);
     }
@@ -216,7 +239,6 @@
       const squatSome = inputSquatSome.checked;
       const squatUnable = inputSquatUnable.checked;
 
-      // Validate inputs
       if (isNaN(age) || age < 1 || age > 120 || (!painYes && !painNo) || (!stiffUnder && !stiffOver) || (!squatNone && !squatSome && !squatUnable)) {
         intakeError.textContent = t('validation_fill_all');
         intakeError.classList.remove('hidden');
@@ -232,7 +254,6 @@
         squatStairsDifficulty: squatUnable ? 'unable' : (squatSome ? 'some' : 'none')
       };
 
-      // Proceed to Movement Test screen
       openMovementScreen();
     });
   }
@@ -242,11 +263,8 @@
   // ==========================================================================
   function openMovementScreen() {
     showScreen('screen-movement');
-
-    // Show initial permission explainer step
     setMovementStep('permission');
 
-    // Initialize or re-attach controller
     if (!state.testController) {
       state.testController = new MovementTestController({
         videoElement: liveVideo,
@@ -254,11 +272,11 @@
         onTick: updateMovementLiveHUD,
         onComplete: onMovementTestCompleted,
         onError: onMovementCameraError,
-        onStateChange: onMovementStateChange
+        onStateChange: onMovementStateChange,
+        onGuidancePrompt: onMovementGuidancePrompt
       });
     }
 
-    // Lazy load the pose model in background now that movement screen is opened
     state.testController.loadPoseModel();
   }
 
@@ -270,7 +288,6 @@
   }
 
   function setupMovementListeners() {
-    // Camera Permission Click
     btnEnableCam.addEventListener('click', async () => {
       btnEnableCam.disabled = true;
       btnEnableCam.textContent = '...';
@@ -286,7 +303,6 @@
       }
     });
 
-    // Retry Camera Click
     btnRetryCam.addEventListener('click', async () => {
       const success = await state.testController.startCamera();
       if (success) {
@@ -297,23 +313,21 @@
       }
     });
 
-    // Fallback simulation buttons
     const triggerDemo = () => {
       setMovementStep('live');
+      syncCanvasDimensions();
       state.testController.startTest(true);
     };
 
     if (btnDemoMode) btnDemoMode.addEventListener('click', triggerDemo);
     if (btnDemoLive) btnDemoLive.addEventListener('click', triggerDemo);
 
-    // Start 30s Test Click
     btnStartTest.addEventListener('click', () => {
       setMovementStep('live');
       syncCanvasDimensions();
       state.testController.startTest(false);
     });
 
-    // Early Finish
     btnStopTest.addEventListener('click', () => {
       state.testController.finishTest();
     });
@@ -347,6 +361,13 @@
     }
   }
 
+  function onMovementGuidancePrompt(prompt) {
+    if (liveGuidanceText && liveGuidancePill) {
+      liveGuidanceText.textContent = t(prompt.key);
+      liveGuidancePill.className = `live-guidance-pill guidance-${prompt.level}`;
+    }
+  }
+
   function onMovementStateChange(event) {
     const statusMsg = document.getElementById('movement-hud-status');
     if (!statusMsg) return;
@@ -366,11 +387,9 @@
   function onMovementTestCompleted(movementSummary) {
     state.movementData = movementSummary;
 
-    // Run clinical scoring
     const result = calculateRiskTier(state.intakeData, state.movementData);
     state.currentResult = result;
 
-    // Show Results screen
     renderResults(result);
     showScreen('screen-results');
   }
@@ -379,9 +398,8 @@
   // SCREEN 3: RESULTS CONTROLLER
   // ==========================================================================
   function renderResults(result) {
-    const tier = result.tier; // 'low' | 'moderate' | 'high'
+    const tier = result.tier;
 
-    // Configure Tier Icon & Styling
     resultCard.className = `result-banner tier-${tier}`;
 
     if (tier === 'low') {
@@ -395,10 +413,8 @@
       resultTierText.textContent = t('risk_high');
     }
 
-    // Prominently display rep count (e.g. "7 stands in 30 seconds")
     resultStandsText.textContent = `${result.reps} ${t('stands_result_suffix')}`;
 
-    // Render 2-3 specific clinical reasons
     findingsList.innerHTML = '';
     result.reasons.forEach((reason) => {
       const li = document.createElement('li');
@@ -410,7 +426,6 @@
       findingsList.appendChild(li);
     });
 
-    // Render NICE NG226 Preventative Guidance
     guidanceList.innerHTML = '';
     result.guidance.forEach((item) => {
       const li = document.createElement('li');
@@ -422,7 +437,6 @@
       guidanceList.appendChild(li);
     });
 
-    // Biomechanical metrics
     if (metricRom) metricRom.textContent = result.metrics.rom ? `${result.metrics.rom}°` : '--';
     if (metricSmoothness) metricSmoothness.textContent = result.metrics.smoothness ? `${result.metrics.smoothness}°/f` : '--';
     if (metricAngles) {
@@ -480,7 +494,7 @@
     };
 
     const existing = getStoredRecords();
-    existing.unshift(record); // Prepend latest
+    existing.unshift(record);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
   }
 
@@ -545,7 +559,7 @@
             <span>${t('patient_age')}: ${rec.intake?.age || '--'}</span>
           </div>
           <div class="history-detail-chip font-bold">
-            <span class="material-symbols-outlined">directions_run</span>
+            <span class="material-symbols-outlined">accessibility_new</span>
             <span>${rec.reps} stands / 30s</span>
           </div>
         </div>
@@ -576,7 +590,6 @@
       .replace(/'/g, '&#039;');
   }
 
-  // Start app when DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

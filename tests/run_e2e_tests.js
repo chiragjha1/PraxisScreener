@@ -11,7 +11,6 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
 }
 
-// 1. Simple static file server
 const MIME_TYPES = {
   '.html': 'text/html',
   '.css': 'text/css',
@@ -78,9 +77,20 @@ async function runTests() {
     }
 
     // --- SCREEN 1: INTAKE ---
-    console.log('1. Testing Screen 1: Clinical Intake...');
+    console.log('1. Testing Screen 1: Clinical Intake (Compact layout)...');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_screen_intake.png') });
     console.log('Saved 01_screen_intake.png');
+
+    // Test Screener Guide Modal
+    console.log('Opening Screener Reference Guide Modal...');
+    await page.click('#btn-open-guide');
+    await new Promise(r => setTimeout(r, 300));
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01d_screener_guide_modal.png') });
+    console.log('Saved 01d_screener_guide_modal.png');
+
+    // Close Modal
+    await page.click('#btn-close-guide');
+    await new Promise(r => setTimeout(r, 200));
 
     // Test Language Switcher (Hindi)
     await page.select('#lang-select', 'hi');
@@ -122,7 +132,7 @@ async function runTests() {
     });
     await new Promise(r => setTimeout(r, 300));
 
-    // Step 2b: Instructions & Arm Push-off disclosure
+    // Step 2b: Shooting Rules Card & Instructions & Arm Push-off disclosure
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '02b_movement_instructions.png') });
     console.log('Saved 02b_movement_instructions.png');
 
@@ -137,12 +147,16 @@ async function runTests() {
       const repsDisplay = document.getElementById('live-reps');
       const angleDisplay = document.getElementById('live-angle');
       const statusDisplay = document.getElementById('live-status');
+      const guidanceText = document.getElementById('live-guidance-text');
+      const guidancePill = document.getElementById('live-guidance-pill');
 
       timerDisplay.textContent = '19s';
       repsDisplay.textContent = '7';
       angleDisplay.textContent = '165°';
       statusDisplay.textContent = 'Standing';
       statusDisplay.className = 'status-pill status-standing';
+      guidanceText.textContent = 'Side profile detected — Ready!';
+      guidancePill.className = 'live-guidance-pill guidance-success';
 
       // Draw synthetic skeleton on live canvas
       const canvas = document.getElementById('live-canvas');
@@ -151,6 +165,14 @@ async function runTests() {
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw side silhouette guide box
+      ctx.save();
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 6]);
+      ctx.strokeRect(canvas.width * 0.15, canvas.height * 0.08, canvas.width * 0.70, canvas.height * 0.84);
+      ctx.restore();
 
       // Draw skeleton lines in brand cyan (#38bdf8)
       ctx.lineWidth = 4;
@@ -180,7 +202,7 @@ async function runTests() {
 
       // Angle callout
       ctx.fillStyle = '#fde047';
-      ctx.font = 'bold 16px sans-serif';
+      ctx.font = 'bold 15px sans-serif';
       ctx.fillText('165° (Extension)', knee.x + 15, knee.y);
     });
 
@@ -188,7 +210,7 @@ async function runTests() {
     console.log('Saved 02c_movement_live_active.png');
 
     // --- SCREEN 3: RESULTS SCREEN ---
-    console.log('3. Testing Screen 3: Results (High Risk permutation)...');
+    console.log('3. Testing Screen 3: Results...');
     await page.evaluate(() => {
       const intakeData = {
         age: 54,
@@ -204,7 +226,6 @@ async function runTests() {
         minAngle: 90
       };
 
-      // Call clinical scoring
       const result = calculateRiskTier(intakeData, movementData);
       
       const screenMovement = document.getElementById('screen-movement');
@@ -241,10 +262,9 @@ async function runTests() {
       metricSmoothness.textContent = `${result.metrics.smoothness}°/f`;
       metricAngles.textContent = `${result.metrics.maxAngle}° / ${result.metrics.minAngle}°`;
 
-      // Save to localStorage
       const records = [{
         id: 'PS_' + Date.now(),
-        dateFormatted: 'Sep 29, 2026, 07:15 PM',
+        dateFormatted: 'Sep 29, 2026, 08:05 PM',
         intake: intakeData,
         movement: movementData,
         tier: result.tier,
@@ -281,7 +301,7 @@ async function runTests() {
 
     await browser.close();
     server.close();
-    console.log('All end-to-end tests completed and screenshots saved!');
+    console.log('All updated mobile tests completed and screenshots saved!');
     process.exit(0);
   });
 }

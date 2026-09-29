@@ -2,7 +2,7 @@
  * Movement Test Controller - PraxisScreener
  * 
  * Implements the OARSI-recommended 30-second chair stand test (Dobson et al., 2013, Osteoarthritis and Cartilage).
- * Tracks knee-flexion angle using MediaPipe Pose ("lite" variant) at ~5 fps.
+ * Tracks knee-flexion angle & thigh inclination using MediaPipe Pose ("lite" variant) at ~5 fps.
  */
 
 // ============================================================================
@@ -10,8 +10,10 @@
 // NOTE: These angle thresholds are first-pass estimates that need calibrating
 // against real recorded footage before they're trustworthy in clinical production.
 // ============================================================================
-const SEATED_ANGLE_THRESHOLD = 105;   // Knee flexion <= 105° indicates patient is seated
-const STANDING_ANGLE_THRESHOLD = 155; // Knee extension >= 155° indicates full upright stand
+const SEATED_ANGLE_THRESHOLD = 118;   // Knee flexion <= 118° indicates patient is seated
+const STANDING_ANGLE_THRESHOLD = 146; // Knee extension >= 146° indicates full upright stand
+const SEATED_THIGH_INCLINE_MAX = 32;  // Thigh angle from horizontal <= 32° (seated)
+const STANDING_THIGH_INCLINE_MIN = 60;// Thigh angle from horizontal >= 60° (upright stand)
 
 const PROCESS_INTERVAL_MS = 200; // ~5 fps throttle for low-end Android efficiency
 const TEST_DURATION_SECONDS = 30; // Standard 30-second protocol duration
@@ -26,6 +28,7 @@ class MovementTestController {
     this.onComplete = options.onComplete || (() => {});
     this.onError = options.onError || (() => {});
     this.onStateChange = options.onStateChange || (() => {});
+    this.onGuidancePrompt = options.onGuidancePrompt || (() => {});
 
     this.mediaStream = null;
     this.poseTracker = null;
@@ -52,6 +55,7 @@ class MovementTestController {
     this.timeRemaining = TEST_DURATION_SECONDS;
     this.timerId = null;
     this.animationFrameId = null;
+    this.lastGuidance = '';
   }
 
   /**
@@ -65,7 +69,6 @@ class MovementTestController {
     this.onStateChange({ status: 'loading_model' });
 
     try {
-      // Check if MediaPipe script is already injected
       if (typeof window.Pose === 'undefined') {
         await this.injectScript('https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js');
       }
@@ -91,7 +94,6 @@ class MovementTestController {
     } catch (err) {
       console.warn('MediaPipe Pose CDN load warning:', err);
       this.isModelLoading = false;
-      // Do not block app: allow camera with simulation or fallback
       this.onStateChange({ status: 'model_load_failed', error: err.message });
       return false;
     }
@@ -115,20 +117,17 @@ class MovementTestController {
 
   /**
    * Starts the camera stream.
-   * Strictly requests REAR/environment camera: facingMode: { ideal: 'environment' }.
+   * Strictly requests REAR camera: facingMode: { ideal: 'environment' }.
    * Does not mirror video preview.
    */
   async startCamera() {
     try {
-      // Check if mediaDevices is supported (requires HTTPS or localhost on phones)
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error('CAMERA_NOT_SUPPORTED_OR_HTTP');
       }
 
-      // Stop any existing stream
       this.stopCamera();
 
-      // Request REAR camera by default: facingMode: { ideal: 'environment' }
       const constraints = {
         audio: false,
         video: {
@@ -144,7 +143,7 @@ class MovementTestController {
       this.videoElement.playsInline = true;
       this.videoElement.muted = true;
       this.videoElement.autoplay = true;
-      
+
       try {
         await this.videoElement.play();
       } catch (playErr) {
@@ -178,21 +177,39 @@ class MovementTestController {
   }
 
   /**
-   * Calculates the 2D joint angle at vertex B formed by points A-B-C.
+   * Calculates true Euclidean joint angle at vertex B formed by points A-B-C in pixel space.
+   * Corrects for aspect ratio distortion of normalized coordinates.
    */
-  calculateJointAngle(pointA, pointB, pointC) {
-    const v1x = pointA.x - pointB.x;
-    const v1y = pointA.y - pointB.y;
-    const v2x = pointC.x - pointB.x;
-    const v2y = pointC.y - pointB.y;
+  calculateJointAngle(pointA, pointB, pointC, width, height) {
+    const pAx = pointA.x * width;
+    const pAy = pointA.y * height;
+    const pBx = pointB.x * width;
+    const pBy = pointB.y * height;
+    const pCx = pointC.x * width;
+    const pCy = pointC.y * height;
+
+    const v1x = pAx - pBx;
+    const v1y = pAy - pBy;
+    const v2x = pCx - pBx;
+    const v2y = pCy - pBy;
 
     const dot = v1x * v2x + v1y * v2y;
-    const mag1 = Math.sqrt(v1x * v1x + v1y * v1y);
-    const mag2 = Math.sqrt(v2x * v2x + v2y * v2y);
+    const mag1 = Math.hypot(v1x, v1y);
+    const mag2 = Math.hypot(v2x, v2y);
 
     if (mag1 === 0 || mag2 === 0) return 0;
     const cosAngle = Math.max(-1, Math.min(1, dot / (mag1 * mag2)));
     return (Math.acos(cosAngle) * 180) / Math.PI;
+  }
+
+  /**
+   * Calculates inclination of thigh relative to horizontal (0 deg = flat/seated, 90 deg = standing upright).
+   */
+  calculateThighIncline(hip, knee, width, height) {
+    const dx = Math.abs((knee.x - hip.x) * width);
+    const dy = Math.abs((knee.y - hip.y) * height);
+    if (dx === 0 && dy === 0) return 45;
+    return (Math.atan2(dy, dx) * 180) / Math.PI;
   }
 
   /**
@@ -201,12 +218,19 @@ class MovementTestController {
   handlePoseResults(results) {
     if (!this.isTestRunning) return;
 
-    // Draw visual feedback overlay
+    const canvasWidth = this.canvasElement?.width || 640;
+    const canvasHeight = this.canvasElement?.height || 480;
+
+    // Draw visual feedback & silhouette guide overlay
     this.renderPoseOverlay(results);
 
-    if (!results.poseLandmarks) return;
+    if (!results || !results.poseLandmarks) {
+      this.updateGuidance('prompt_step_back', 'warning');
+      return;
+    }
 
     const lm = results.poseLandmarks;
+
     // Landmark indices:
     // Left side: Hip 23, Knee 25, Ankle 27
     // Right side: Hip 24, Knee 26, Ankle 28
@@ -221,22 +245,52 @@ class MovementTestController {
     const leftConf = (leftHip?.visibility || 0) + (leftKnee?.visibility || 0) + (leftAnkle?.visibility || 0);
     const rightConf = (rightHip?.visibility || 0) + (rightKnee?.visibility || 0) + (rightAnkle?.visibility || 0);
 
+    // Check full-body visibility (head, hip, knee, ankle)
+    const nose = lm[0];
+    const bestConf = Math.max(leftConf, rightConf);
+
+    if (bestConf < 1.2 || (leftAnkle?.y > 0.98 && rightAnkle?.y > 0.98)) {
+      this.updateGuidance('prompt_step_back', 'warning');
+      return;
+    }
+
+    // Check for Front vs Side Profile
+    // In front view, left and right hips are far apart horizontally (|x_L - x_R| > 0.16)
+    const hipDistX = Math.abs((leftHip?.x || 0) - (rightHip?.x || 0));
+    if (hipDistX > 0.22 && Math.abs(leftConf - rightConf) < 0.4) {
+      this.updateGuidance('prompt_align_side', 'danger');
+    } else {
+      this.updateGuidance('prompt_ready', 'success');
+    }
+
+    // Compute metrics on whichever side is directly facing the camera
     let angle = 0;
+    let thighIncline = 0;
+
     if (leftConf >= rightConf && leftConf > 1.2) {
-      angle = this.calculateJointAngle(leftHip, leftKnee, leftAnkle);
+      angle = this.calculateJointAngle(leftHip, leftKnee, leftAnkle, canvasWidth, canvasHeight);
+      thighIncline = this.calculateThighIncline(leftHip, leftKnee, canvasWidth, canvasHeight);
     } else if (rightConf > 1.2) {
-      angle = this.calculateJointAngle(rightHip, rightKnee, rightAnkle);
+      angle = this.calculateJointAngle(rightHip, rightKnee, rightAnkle, canvasWidth, canvasHeight);
+      thighIncline = this.calculateThighIncline(rightHip, rightKnee, canvasWidth, canvasHeight);
     }
 
     if (angle > 0) {
-      this.processAngleSample(angle);
+      this.processAngleSample(angle, thighIncline);
+    }
+  }
+
+  updateGuidance(messageKey, level = 'info') {
+    if (this.lastGuidance !== messageKey) {
+      this.lastGuidance = messageKey;
+      this.onGuidancePrompt({ key: messageKey, level: level });
     }
   }
 
   /**
-   * Evaluates a knee flexion angle sample through the rep counting state machine.
+   * Evaluates knee angle and thigh inclination through the rep counting state machine.
    */
-  processAngleSample(angle) {
+  processAngleSample(angle, thighIncline = 45) {
     this.currentAngle = Math.round(angle);
     this.anglesHistory.push(this.currentAngle);
 
@@ -244,17 +298,26 @@ class MovementTestController {
     if (this.currentAngle > this.maxAngle) this.maxAngle = this.currentAngle;
 
     // -------------------------------------------------------------
-    // REP COUNTING STATE MACHINE:
-    // 1 rep = Seated -> Standing (>=155°) -> Seated (<=105°)
+    // ROBUST REP COUNTING STATE MACHINE:
+    // Combines knee angle with thigh inclination for rock-solid
+    // sitting vs standing classification even with loose clothing.
     // -------------------------------------------------------------
-    if (this.currentAngle >= STANDING_ANGLE_THRESHOLD) {
+    const isSeatedPosture = this.currentAngle <= SEATED_ANGLE_THRESHOLD || thighIncline <= SEATED_THIGH_INCLINE_MAX;
+    const isStandingPosture = this.currentAngle >= STANDING_ANGLE_THRESHOLD && thighIncline >= STANDING_THIGH_INCLINE_MIN;
+
+    if (isStandingPosture) {
       this.currentPosition = 'standing';
       this.hasStoodUp = true;
-    } else if (this.currentAngle <= SEATED_ANGLE_THRESHOLD) {
+    } else if (isSeatedPosture) {
       if (this.hasStoodUp) {
         // Full stand-and-sit cycle completed!
         this.reps++;
         this.hasStoodUp = false;
+        
+        // Haptic feedback if available on device
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+          try { navigator.vibrate(60); } catch (e) {}
+        }
       }
       this.currentPosition = 'seated';
     } else {
@@ -265,12 +328,13 @@ class MovementTestController {
       timeRemaining: this.timeRemaining,
       reps: this.reps,
       currentAngle: this.currentAngle,
+      thighIncline: Math.round(thighIncline),
       position: this.currentPosition
     });
   }
 
   /**
-   * Renders pose skeleton overlay on the canvas.
+   * Renders pose skeleton and side-view alignment guide overlay.
    */
   renderPoseOverlay(results) {
     if (!this.canvasCtx || !this.canvasElement) return;
@@ -280,6 +344,14 @@ class MovementTestController {
 
     ctx.clearRect(0, 0, width, height);
 
+    // Draw side-view framing silhouette guide (subtle dashed box)
+    ctx.save();
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 6]);
+    ctx.strokeRect(width * 0.15, height * 0.08, width * 0.70, height * 0.84);
+    ctx.restore();
+
     if (!results || !results.poseLandmarks) return;
     const lm = results.poseLandmarks;
 
@@ -288,11 +360,11 @@ class MovementTestController {
     ctx.strokeStyle = '#38bdf8';
     ctx.fillStyle = '#0284c7';
 
-    // Draw leg segments (23-25-27 and 24-26-28)
+    // Draw leg segments
     const pairs = [
       [23, 25], [25, 27], // Left hip-knee-ankle
       [24, 26], [26, 28], // Right hip-knee-ankle
-      [11, 12], [11, 23], [12, 24], [23, 24] // Torso
+      [11, 23], [12, 24]  // Torso side
     ];
 
     pairs.forEach(([i, j]) => {
@@ -304,7 +376,7 @@ class MovementTestController {
       }
     });
 
-    // Draw key joint dots
+    // Draw key joint markers
     [23, 24, 25, 26, 27, 28].forEach((idx) => {
       const pt = lm[idx];
       if (pt && (pt.visibility || 0) > 0.4) {
@@ -392,10 +464,9 @@ class MovementTestController {
     this.simInterval = setInterval(() => {
       if (!this.isTestRunning) return;
       t += 0.25;
-      // Synthesize realistic sit-to-stand periodic wave:
-      // Sinusoid between 95° (seated) and 165° (standing), ~3.2s per rep cycle
-      const angle = 130 + 35 * Math.sin(t * 1.8);
-      this.processAngleSample(angle);
+      const angle = 132 + 34 * Math.sin(t * 1.8);
+      const thighIncline = 48 + 36 * Math.sin(t * 1.8);
+      this.processAngleSample(angle, thighIncline);
     }, 200);
   }
 

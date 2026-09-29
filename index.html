@@ -9,20 +9,26 @@
   <!-- Single CDN link for Google Material Symbols -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24..48,100..700,0..1,-50..200">
   
-  <!-- High-contrast sunlight-ready stylesheet -->
+  <!-- High-contrast compact sunlight stylesheet -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
   <div class="app-container">
-    <!-- Fixed High-Contrast App Header -->
+    <!-- Compact Non-Overlapping App Header -->
     <header class="app-header">
       <div class="brand-wrapper">
         <img src="assets/logo.png" alt="PraxisScreener" class="brand-logo-img">
         <span class="brand-title">PraxisScreener</span>
       </div>
       <div class="header-actions">
-        <!-- Language Selector -->
+        <!-- In-App Screener Reference Guide Button -->
+        <button type="button" id="btn-open-guide" class="btn-header-guide" aria-label="Screener Guide">
+          <span class="material-symbols-outlined">help_outline</span>
+          <span data-i18n="nav_guide">Guide</span>
+        </button>
+
+        <!-- Compact Language Selector -->
         <div class="lang-selector-wrapper">
           <span class="material-symbols-outlined">translate</span>
           <select id="lang-select" class="lang-select" aria-label="Language">
@@ -65,18 +71,16 @@
             <span class="material-symbols-outlined form-label-icon">person</span>
             <label for="input-age" class="form-label-text" data-i18n="age_label">Patient Age (years)</label>
           </div>
-          <div class="text-input-wrapper">
-            <input 
-              type="number" 
-              id="input-age" 
-              class="number-input" 
-              min="18" 
-              max="115" 
-              placeholder="Enter age (e.g. 52)" 
-              data-i18n-placeholder="age_placeholder" 
-              required
-            >
-          </div>
+          <input 
+            type="number" 
+            id="input-age" 
+            class="number-input" 
+            min="18" 
+            max="115" 
+            placeholder="Enter age (e.g. 52)" 
+            data-i18n-placeholder="age_placeholder" 
+            required
+          >
           <p class="form-hint" data-i18n="age_hint">Age 45 or older is a primary NICE clinical indicator</p>
         </div>
 
@@ -104,7 +108,7 @@
           </div>
         </div>
 
-        <!-- Item 3: Morning Joint Stiffness Duration (Strict 30-min threshold) -->
+        <!-- Item 3: Morning Joint Stiffness Duration (Strict 30-min cutoff) -->
         <div class="form-group">
           <div class="form-label-row">
             <span class="material-symbols-outlined form-label-icon">schedule</span>
@@ -169,7 +173,7 @@
           <span data-i18n="validation_fill_all">Please complete all fields to proceed.</span>
         </div>
 
-        <!-- Large touch-target Next Button in Bottom 1/3 -->
+        <!-- Action Button in Bottom 1/3 -->
         <div class="action-bottom-container">
           <button type="submit" class="btn-primary">
             <span class="material-symbols-outlined">arrow_forward</span>
@@ -180,7 +184,7 @@
     </main>
 
     <!-- ====================================================================
-         SCREEN 2: MOVEMENT TEST (OARSI 30-Second Chair Stand)
+         SCREEN 2: MOVEMENT TEST & CAMERA SETUP
          ==================================================================== -->
     <section id="screen-movement" class="screen">
       <div class="screen-header">
@@ -195,7 +199,7 @@
       <div id="movement-step-permission" class="movement-step-box">
         <span class="material-symbols-outlined movement-icon-hero">photo_camera</span>
         <h2 class="form-label-text" data-i18n="camera_perm_title">Camera Access Required</h2>
-        <p class="screen-subtitle" style="margin-top: 8px;" data-i18n="camera_perm_desc">
+        <p class="screen-subtitle" style="margin-top: 6px;" data-i18n="camera_perm_desc">
           Camera access is needed to observe and count chair stand movements in real time.
         </p>
 
@@ -216,27 +220,39 @@
         </div>
       </div>
 
-      <!-- Step 2: Protocol Instructions & Arm Disclosure -->
+      <!-- Step 2: Protocol Instructions & Crucial Camera Angle Setup -->
       <div id="movement-step-instructions" class="movement-step-box hidden">
-        <h2 class="form-label-text" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <span class="material-symbols-outlined" style="color: var(--brand-blue)">checklist</span>
-          <span data-i18n="instructions_title">Test Instructions</span>
-        </h2>
+        <!-- Highlighted Camera Angle & Distance Rules -->
+        <div class="shooting-rules-card">
+          <div class="rule-highlight-badge">
+            <span class="material-symbols-outlined" style="font-size: 16px;">videocam</span>
+            <span data-i18n="shoot_guide_title">Camera Angle & Shooting Rules</span>
+          </div>
 
-        <ul class="instruction-list">
-          <li>
-            <span class="inst-num">1</span>
-            <span data-i18n="inst_1">Sit in a sturdy chair with no armrests.</span>
-          </li>
-          <li>
-            <span class="inst-num">2</span>
-            <span data-i18n="inst_2">Cross your arms firmly over your chest.</span>
-          </li>
-          <li>
-            <span class="inst-num">3</span>
-            <span data-i18n="inst_3">Stand fully upright and sit back down as many times as possible in 30 seconds.</span>
-          </li>
-        </ul>
+          <ul class="shooting-rules-list">
+            <li>
+              <span class="material-symbols-outlined rule-icon" style="color: #0284c7;">switch_camera</span>
+              <div>
+                <div class="rule-title" data-i18n="shoot_angle_heading">FILM FROM THE SIDE (Lateral Profile)</div>
+                <div class="rule-desc" data-i18n="shoot_angle_desc">Point camera at the patient's SIDE (90° profile), NEVER from the front. Knee flexion angle can only be detected from the side.</div>
+              </div>
+            </li>
+            <li>
+              <span class="material-symbols-outlined rule-icon" style="color: #0284c7;">straighten</span>
+              <div>
+                <div class="rule-title" data-i18n="shoot_distance_heading">Distance: 2 to 3 meters (6–10 ft)</div>
+                <div class="rule-desc" data-i18n="shoot_distance_desc">Step back until patient's head, hips, knees, and feet are all fully visible in frame at chair height.</div>
+              </div>
+            </li>
+            <li>
+              <span class="material-symbols-outlined rule-icon" style="color: #0284c7;">chair</span>
+              <div>
+                <div class="rule-title" data-i18n="shoot_chair_heading">Armless Chair & Crossed Arms</div>
+                <div class="rule-desc" data-i18n="shoot_chair_desc">Use a sturdy chair with NO armrests. Patient must keep arms crossed over chest throughout.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
 
         <!-- Honest arm-push-off disclosure line -->
         <div class="disclosure-box">
@@ -254,37 +270,43 @@
         </div>
       </div>
 
-      <!-- Step 3: Live Test Recording & Pose Tracking -->
+      <!-- Step 3: Live Test Recording & Pose Tracking with Guidance Pill -->
       <div id="movement-step-live" class="hidden">
         <div class="live-camera-container">
           <!-- Non-mirrored rear camera video -->
           <video id="live-video" class="live-video" playsinline muted autoplay></video>
           <canvas id="live-canvas" class="live-canvas"></canvas>
 
-          <!-- Top Live HUD -->
+          <!-- Real-Time On-Screen Guidance Pill -->
+          <div id="live-guidance-pill" class="live-guidance-pill guidance-warning">
+            <span class="material-symbols-outlined" style="font-size: 16px;">info</span>
+            <span id="live-guidance-text" data-i18n="prompt_align_side">Position patient in SIDE view</span>
+          </div>
+
+          <!-- Top Live Stats HUD (Replaced dumbbell with clear chair-stand icon & explicit text) -->
           <div class="live-hud-top">
             <div class="hud-pill hud-pill-timer">
               <span class="material-symbols-outlined">timer</span>
               <span id="live-timer">30s</span>
             </div>
             <div class="hud-pill hud-pill-reps">
-              <span class="material-symbols-outlined">fitness_center</span>
-              <span id="live-reps">0</span>
+              <span class="material-symbols-outlined">accessibility_new</span>
+              <span data-i18n="reps_completed">Stands</span>: <span id="live-reps" style="margin-left: 4px;">0</span>
             </div>
           </div>
 
           <!-- Bottom Live HUD -->
           <div class="live-hud-bottom">
-            <div id="live-status" class="status-pill status-seated">Seated</div>
+            <div id="live-status" class="status-pill status-seated" data-i18n="status_seated">Seated</div>
             <div class="angle-badge">
               <span id="live-angle">--°</span>
             </div>
           </div>
         </div>
 
-        <div id="movement-hud-status" style="font-size: 0.9rem; font-weight: 700; color: var(--brand-blue); text-align: center; margin-top: 8px;"></div>
+        <div id="movement-hud-status" style="font-size: 0.85rem; font-weight: 700; color: var(--brand-blue); text-align: center; margin-top: 6px;"></div>
 
-        <div class="action-bottom-container" style="padding-top: 16px;">
+        <div class="action-bottom-container" style="padding-top: 12px;">
           <button type="button" id="btn-stop-test" class="btn-secondary" style="border-color: #fca5a5; color: #b91c1c;">
             <span class="material-symbols-outlined">stop_circle</span>
             <span data-i18n="btn_stop_test">Finish Test Early</span>
@@ -296,7 +318,7 @@
       <div id="movement-step-error" class="movement-step-box hidden">
         <span class="material-symbols-outlined movement-icon-hero" style="color: #b91c1c;">no_photography</span>
         <h2 class="form-label-text" data-i18n="camera_error_title">Camera Access Issue</h2>
-        <p class="screen-subtitle" style="margin-top: 8px;" data-i18n="camera_error_desc">
+        <p class="screen-subtitle" style="margin-top: 6px;" data-i18n="camera_error_desc">
           Could not access the rear camera. Please verify camera permissions in browser settings.
         </p>
 
@@ -333,7 +355,7 @@
       <div id="result-card" class="result-banner tier-low">
         <span id="result-tier-icon" class="material-symbols-outlined result-tier-icon">check_circle</span>
         <h2 id="result-tier-text" class="result-tier-title">Low Risk</h2>
-        <!-- Primary Rep Count Display -->
+        <!-- Prominent Rep Count Display -->
         <p id="result-stands-text" class="result-stands-prominent">12 stands in 30 seconds</p>
       </div>
 
@@ -402,8 +424,8 @@
       </div>
 
       <div id="history-empty" class="history-empty">
-        <span class="material-symbols-outlined">folder_open</span>
-        <p data-i18n="history_empty">No screening records stored on this device yet.</p>
+        <span class="material-symbols-outlined" style="font-size: 36px; color: var(--border-strong);">folder_open</span>
+        <p data-i18n="history_empty" style="margin-top: 6px;">No screening records stored on this device yet.</p>
       </div>
 
       <div id="history-list" class="history-list"></div>
@@ -415,9 +437,109 @@
         </button>
       </div>
     </section>
+
+    <!-- ====================================================================
+         SCREENER REFERENCE GUIDE MODAL (HOW IT WORKS & ICON LEGEND)
+         ==================================================================== -->
+    <div id="guide-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+      <div class="guide-modal-content">
+        <div class="guide-modal-header">
+          <div class="guide-modal-title">
+            <span class="material-symbols-outlined" style="color: #fde047;">menu_book</span>
+            <span data-i18n="guide_title">Screener Reference Guide</span>
+          </div>
+          <button type="button" id="btn-close-guide" class="btn-close-modal" aria-label="Close">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div class="guide-modal-body">
+          <!-- Question 1: What does 0 stands mean? -->
+          <div class="guide-qa-box">
+            <div class="guide-q-title">
+              <span class="material-symbols-outlined" style="color: #b91c1c;">help</span>
+              <span data-i18n="guide_q1_title">What does '0 stands in 30s' mean?</span>
+            </div>
+            <p class="guide-q-desc" data-i18n="guide_q1_desc">
+              Clinically, 0 stands means the patient was physically unable to rise from the chair even once without using their arms. This signals severe lower-extremity muscular weakness or advanced joint pathology. Technically, if the patient did stand up but 0 was recorded, the camera was misaligned (e.g. filmed from the front instead of the side, or legs were cut off from the frame).
+            </p>
+          </div>
+
+          <!-- Question 2: Why film from the side? -->
+          <div class="guide-qa-box">
+            <div class="guide-q-title">
+              <span class="material-symbols-outlined" style="color: #0284c7;">videocam</span>
+              <span data-i18n="guide_q2_title">Why must you film from the SIDE?</span>
+            </div>
+            <p class="guide-q-desc" data-i18n="guide_q2_desc">
+              When viewed from the front, human legs appear straight even when sitting. The computer vision model measures the knee flexion angle (from ~90° seated to ~180° standing), which is only visible from a 90° lateral profile view.
+            </p>
+          </div>
+
+          <!-- Question 3: Stand count benchmarks -->
+          <div class="guide-qa-box">
+            <div class="guide-q-title">
+              <span class="material-symbols-outlined" style="color: #15803d;">speed</span>
+              <span data-i18n="guide_q3_title">What do the stand count cutoffs mean?</span>
+            </div>
+            <p class="guide-q-desc" data-i18n="guide_q3_desc">
+              CDC STEADI Protocol Cutoff: 9 or fewer completed stands in 30 seconds indicates low lower-body functional capacity and fall risk. 10 or more stands indicates preserved functional strength.
+            </p>
+          </div>
+
+          <!-- Icon & Symbol Legend -->
+          <div class="guide-qa-box">
+            <div class="guide-q-title">
+              <span class="material-symbols-outlined" style="color: #0f172a;">info</span>
+              <span data-i18n="guide_q4_title">Icon Legend</span>
+            </div>
+            <div class="icon-legend-grid">
+              <div class="legend-row">
+                <span class="legend-icon-badge" style="color: var(--brand-blue);"><span class="material-symbols-outlined">accessibility_new</span></span>
+                <span data-i18n="guide_icon_stand">Stands Count (replaces old dumbbell icon with clear chair stand)</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-icon-badge" style="color: #d97706;"><span class="material-symbols-outlined">timer</span></span>
+                <span data-i18n="guide_icon_timer">30-Second OARSI validated countdown</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-icon-badge" style="color: #15803d;"><span class="material-symbols-outlined">check_circle</span></span>
+                <span data-i18n="guide_icon_low">Low Risk: Preserved physical function & negative clinical criteria</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-icon-badge" style="color: #b45309;"><span class="material-symbols-outlined">warning</span></span>
+                <span data-i18n="guide_icon_mod">Moderate Risk: Partial clinical signs or borderline functional capacity</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-icon-badge" style="color: #b91c1c;"><span class="material-symbols-outlined">error</span></span>
+                <span data-i18n="guide_icon_high">High Risk: NICE NG226 criteria met with low functional stand count (≤9)</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-icon-badge" style="color: #15803d;"><span class="material-symbols-outlined">fitness_center</span></span>
+                <span data-i18n="guide_icon_exercise">Daily knee-strengthening movement (exercise, not rest)</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-icon-badge" style="color: var(--brand-navy);"><span class="material-symbols-outlined">monitor_weight</span></span>
+                <span data-i18n="guide_icon_weight">Healthy weight management to reduce joint load</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-icon-badge" style="color: var(--brand-navy);"><span class="material-symbols-outlined">chair</span></span>
+                <span data-i18n="guide_icon_stool">Use low stool instead of deep squatting for floor tasks</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: 12px 16px; background-color: #f8fafc; border-top: 1px solid var(--border-light);">
+          <button type="button" id="btn-close-guide-footer" class="btn-primary" style="min-height: 44px;">
+            <span data-i18n="guide_close">Close Guide</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Application Logic Modules -->
+  <!-- Application Modules -->
   <script src="js/translations.js"></script>
   <script src="js/scoring.js"></script>
   <script src="js/movement.js"></script>

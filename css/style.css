@@ -1,6 +1,6 @@
 /* ==========================================================================
-   PraxisScreener - High-Contrast Mobile-First Stylesheet
-   Optimized for outdoor sunlight viewing on mid/low-end Android devices.
+   PraxisScreener - Compact, High-Contrast Mobile-First Stylesheet
+   Optimized specifically for real Android phone screens and sunlight viewing.
    ========================================================================== */
 
 :root {
@@ -32,12 +32,12 @@
   --tier-high-bg: #fee2e2;
   --tier-high-border: #fca5a5;
 
-  /* Touch & Typography Standards */
+  /* Mobile Touch & Proportional Typography */
   --min-touch-target: 48px;
-  --font-base: 18px;          /* Larger-than-default for outdoor readability */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --font-base: 15px;          /* Clean base for mobile screens */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
 }
 
 /* CSS Reset & Mobile Base */
@@ -50,7 +50,7 @@
 html, body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: var(--font-base);
-  line-height: 1.45;
+  line-height: 1.4;
   color: var(--text-main);
   background-color: var(--bg-app);
   -webkit-font-smoothing: antialiased;
@@ -60,8 +60,8 @@ html, body {
 
 /* Material Symbols Icon Sizing */
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 28;
-  font-size: 28px;
+  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+  font-size: 24px;
   line-height: 1;
   vertical-align: middle;
   display: inline-flex;
@@ -70,9 +70,10 @@ html, body {
   flex-shrink: 0;
 }
 
-/* Single-Column Mobile Container */
+/* Single-Column Mobile Shell */
 .app-container {
-  max-width: 500px;
+  width: 100%;
+  max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
   display: flex;
@@ -82,11 +83,11 @@ html, body {
   position: relative;
 }
 
-/* High-Contrast App Header */
+/* Sleek Compact Header (No Overlaps on Phones) */
 .app-header {
   background-color: #0f172a;
   color: var(--text-light);
-  padding: 12px 16px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -99,41 +100,71 @@ html, body {
 .brand-wrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
 .brand-logo-img {
-  height: 42px;
+  height: 28px;
   width: auto;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .brand-title {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
   color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
+/* Guide Button in Header */
+.btn-header-guide {
+  background: #1e293b;
+  border: 1px solid var(--border-strong);
+  color: #e2e8f0;
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 34px;
+}
+
+.btn-header-guide .material-symbols-outlined {
+  font-size: 18px;
+  color: #fde047;
+}
+
+/* Language Selector */
 .lang-selector-wrapper {
   display: flex;
   align-items: center;
   background: #1e293b;
   border: 1px solid var(--brand-cyan);
   border-radius: var(--radius-sm);
-  padding: 4px 8px;
+  padding: 2px 6px;
   color: #ffffff;
+  min-height: 34px;
 }
 
 .lang-selector-wrapper .material-symbols-outlined {
-  font-size: 20px;
-  margin-right: 4px;
+  font-size: 16px;
+  margin-right: 2px;
   color: var(--brand-cyan);
 }
 
@@ -141,7 +172,7 @@ html, body {
   background: transparent;
   color: #ffffff;
   border: none;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 700;
   outline: none;
   cursor: pointer;
@@ -152,7 +183,7 @@ html, body {
   color: #ffffff;
 }
 
-/* Secondary Top Nav Bar */
+/* Compact Nav Bar */
 .app-nav {
   display: flex;
   background-color: #1e293b;
@@ -164,17 +195,17 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 8px;
-  min-height: var(--min-touch-target);
+  gap: 6px;
+  padding: 8px 4px;
+  min-height: 42px;
   background: transparent;
   border: none;
   color: #94a3b8;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
-  border-bottom: 4px solid transparent;
-  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+  transition: all 0.15s ease;
 }
 
 .nav-tab.nav-active {
@@ -183,11 +214,15 @@ html, body {
   background-color: rgba(56, 189, 248, 0.08);
 }
 
-/* Main Screen Viewport */
+.nav-tab .material-symbols-outlined {
+  font-size: 20px;
+}
+
+/* Screen Viewports */
 .screen {
   display: none;
   flex: 1;
-  padding: 16px 16px 32px;
+  padding: 12px 14px 24px;
   flex-direction: column;
 }
 
@@ -197,81 +232,76 @@ html, body {
 
 /* Section Header Typography */
 .screen-header {
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--border-light);
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid var(--border-light);
 }
 
 .screen-title-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .screen-icon {
   color: var(--brand-blue);
-  font-size: 32px;
+  font-size: 24px;
 }
 
 .screen-title {
-  font-size: 1.4rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--text-main);
 }
 
 .screen-subtitle {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-muted);
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 /* ==========================================================================
-   FORM & INTAKE STYLING
+   FORM & INTAKE STYLING (PROPORTIONAL & COMPACT FOR PHONES)
    ========================================================================== */
 .form-group {
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
 
 .form-label-row {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 10px;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 .form-label-icon {
   color: var(--brand-blue);
-  font-size: 26px;
-  margin-top: 2px;
+  font-size: 20px;
 }
 
 .form-label-text {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-main);
+  line-height: 1.3;
 }
 
 .form-hint {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-muted);
-  margin-top: 4px;
-  margin-left: 34px;
+  margin-top: 3px;
 }
 
-/* Large Numeric Input */
-.text-input-wrapper {
-  margin-left: 34px;
-}
-
+/* Inputs & Touch Cards (No Wasted Left Margins) */
 .number-input {
   width: 100%;
-  min-height: 54px;
-  padding: 10px 16px;
-  font-size: 1.3rem;
+  min-height: 46px;
+  padding: 8px 12px;
+  font-size: 1.15rem;
   font-weight: 700;
-  border: 2px solid var(--border-strong);
+  border: 1.5px solid var(--border-strong);
   border-radius: var(--radius-md);
   color: var(--text-main);
   background-color: #f8fafc;
@@ -280,36 +310,33 @@ html, body {
 
 .number-input:focus {
   border-color: var(--brand-blue);
-  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
   background-color: #ffffff;
-}
-
-/* Touch-Friendly Radio Card Groups */
-.radio-cards-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-left: 34px;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
 }
 
 .radio-cards-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-left: 34px;
+  gap: 8px;
+}
+
+.radio-cards-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .radio-card {
   display: flex;
   align-items: center;
-  min-height: 52px;
-  padding: 10px 14px;
-  border: 2px solid var(--border-strong);
+  min-height: 46px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border-strong);
   border-radius: var(--radius-md);
   background-color: #f8fafc;
   cursor: pointer;
   position: relative;
-  transition: all 0.15s ease;
+  transition: all 0.1s ease;
   user-select: none;
 }
 
@@ -322,13 +349,13 @@ html, body {
 .radio-card-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
 .radio-indicator {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   border: 2px solid var(--border-strong);
   display: flex;
@@ -345,8 +372,8 @@ html, body {
 
 .radio-card input[type="radio"]:checked + .radio-card-content .radio-indicator::after {
   content: "";
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: #ffffff;
 }
@@ -354,186 +381,208 @@ html, body {
 .radio-card:has(input[type="radio"]:checked) {
   border-color: var(--brand-blue);
   background-color: #f0f9ff;
-  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.15);
 }
 
 .radio-label {
-  font-size: 1.05rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--text-main);
+  line-height: 1.25;
 }
 
-/* Supplementary Section Banner */
 .supplementary-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background-color: #e0f2fe;
   color: var(--brand-navy);
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 800;
-  padding: 4px 10px;
+  padding: 2px 8px;
   border-radius: var(--radius-sm);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   border: 1px solid #bae6fd;
 }
 
-/* Primary Action Container (Bottom 1/3 of Viewport) */
+.supplementary-badge .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* Primary Action Buttons */
 .action-bottom-container {
   margin-top: auto;
-  padding-top: 24px;
+  padding-top: 16px;
 }
 
 .btn-primary {
   width: 100%;
-  min-height: 56px;
-  padding: 14px 20px;
+  min-height: 50px;
+  padding: 10px 16px;
   background-color: var(--brand-blue);
   color: #ffffff;
   border: none;
   border-radius: var(--radius-lg);
-  font-size: 1.2rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
-  transition: background-color 0.15s ease, transform 0.1s ease;
-}
-
-.btn-primary:active {
-  background-color: var(--brand-dark-blue);
-  transform: scale(0.98);
-}
-
-.btn-secondary {
-  width: 100%;
-  min-height: 52px;
-  padding: 12px 18px;
-  background-color: #ffffff;
-  color: var(--text-main);
-  border: 2px solid var(--border-strong);
-  border-radius: var(--radius-lg);
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  margin-top: 12px;
+  box-shadow: 0 3px 8px rgba(2, 132, 199, 0.3);
 }
 
-.btn-secondary:active {
-  background-color: #f1f5f9;
+.btn-primary:active {
+  background-color: var(--brand-dark-blue);
+}
+
+.btn-secondary {
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 14px;
+  background-color: #ffffff;
+  color: var(--text-main);
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  margin-top: 8px;
 }
 
 .form-error-msg {
   background-color: #fee2e2;
   color: #991b1b;
-  border: 2px solid #fca5a5;
+  border: 1.5px solid #fca5a5;
   border-radius: var(--radius-md);
-  padding: 10px 14px;
+  padding: 8px 12px;
   font-weight: 700;
-  font-size: 1rem;
-  margin-top: 14px;
+  font-size: 0.9rem;
+  margin-top: 10px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 /* ==========================================================================
-   MOVEMENT TEST SCREEN
+   CAMERA & SHOOTING INSTRUCTIONS (CRUCIAL FOR ACCURATE SCREENING)
    ========================================================================== */
 .movement-step-box {
   background-color: #f8fafc;
-  border: 2px solid var(--border-light);
+  border: 1.5px solid var(--border-light);
   border-radius: var(--radius-lg);
-  padding: 20px;
+  padding: 14px;
   text-align: center;
 }
 
 .movement-icon-hero {
-  font-size: 64px;
+  font-size: 48px;
   color: var(--brand-blue);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
-.instruction-list {
-  text-align: left;
-  list-style: none;
-  margin: 16px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.instruction-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-
-.inst-num {
-  background-color: var(--brand-blue);
-  color: #ffffff;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 0.95rem;
-  flex-shrink: 0;
-}
-
-/* Honest Disclosure Alert */
-.disclosure-box {
-  background-color: #fef3c7;
-  border: 2px solid #fcd34d;
+/* Critical Shooting Guide Card */
+.shooting-rules-card {
+  background-color: #eff6ff;
+  border: 2px solid #38bdf8;
   border-radius: var(--radius-md);
   padding: 12px;
-  margin-top: 16px;
+  margin: 12px 0;
+  text-align: left;
+}
+
+.rule-highlight-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #0284c7;
+  color: #ffffff;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.shooting-rules-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shooting-rules-list li {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 8px;
+}
+
+.rule-icon {
+  font-size: 20px;
+  color: #0284c7;
+  margin-top: 2px;
+}
+
+.rule-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.rule-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.disclosure-box {
+  background-color: #fef3c7;
+  border: 1.5px solid #fcd34d;
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  margin-top: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   text-align: left;
 }
 
 .disclosure-icon {
   color: #b45309;
-  font-size: 26px;
+  font-size: 20px;
+  margin-top: 2px;
 }
 
 .disclosure-text {
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: #78350f;
-  line-height: 1.35;
+  line-height: 1.3;
 }
 
-/* HTTPS Notice Box */
 .https-notice-box {
   background-color: #e0f2fe;
   border: 1px solid #7dd3fc;
   border-radius: var(--radius-md);
-  padding: 10px 12px;
-  margin: 14px 0;
-  font-size: 0.9rem;
+  padding: 8px 10px;
+  margin: 10px 0;
+  font-size: 0.82rem;
   font-weight: 600;
   color: #0369a1;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   text-align: left;
 }
 
-/* Live Video Preview & HUD */
+/* ==========================================================================
+   LIVE TEST HUD & FEEDBACK
+   ========================================================================== */
 .live-camera-container {
   position: relative;
   width: 100%;
@@ -541,15 +590,13 @@ html, body {
   background-color: #000000;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  border: 3px solid #0f172a;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  border: 2px solid #0f172a;
 }
 
 .live-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Do not mirror video preview per requirement */
   transform: none;
 }
 
@@ -562,12 +609,47 @@ html, body {
   pointer-events: none;
 }
 
-/* In-Test HUD Overlays */
+/* Live On-Screen Guidance Prompt */
+.live-guidance-pill {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(15, 23, 42, 0.9);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 10;
+}
+
+.guidance-success {
+  border-color: #22c55e;
+  color: #86efac;
+}
+
+.guidance-warning {
+  border-color: #f59e0b;
+  color: #fde047;
+}
+
+.guidance-danger {
+  border-color: #ef4444;
+  color: #fca5a5;
+}
+
+/* Top Live Stats HUD */
 .live-hud-top {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
+  top: 36px;
+  left: 8px;
+  right: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -577,14 +659,14 @@ html, body {
 .hud-pill {
   background-color: rgba(15, 23, 42, 0.85);
   color: #ffffff;
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 9999px;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 800;
   display: flex;
   align-items: center;
-  gap: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .hud-pill-timer {
@@ -593,14 +675,13 @@ html, body {
 
 .hud-pill-reps {
   color: var(--brand-cyan);
-  font-size: 1.25rem;
 }
 
 .live-hud-bottom {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -608,12 +689,11 @@ html, body {
 }
 
 .status-pill {
-  padding: 6px 14px;
+  padding: 4px 10px;
   border-radius: 9999px;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .status-standing {
@@ -634,9 +714,9 @@ html, body {
 .angle-badge {
   background-color: rgba(15, 23, 42, 0.85);
   color: #ffffff;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: var(--radius-sm);
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   font-weight: 700;
 }
 
@@ -645,10 +725,10 @@ html, body {
    ========================================================================== */
 .result-banner {
   border-radius: var(--radius-lg);
-  padding: 20px 16px;
+  padding: 14px 12px;
   text-align: center;
-  margin-bottom: 20px;
-  border: 3px solid transparent;
+  margin-bottom: 12px;
+  border: 2px solid transparent;
 }
 
 .tier-low {
@@ -670,38 +750,37 @@ html, body {
 }
 
 .result-tier-icon {
-  font-size: 54px;
-  margin-bottom: 6px;
+  font-size: 42px;
+  margin-bottom: 4px;
 }
 
 .result-tier-title {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 900;
-  letter-spacing: -0.5px;
 }
 
 .result-stands-prominent {
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  margin-top: 6px;
+  margin-top: 4px;
   color: var(--text-main);
 }
 
 .results-section-card {
   background-color: #f8fafc;
-  border: 2px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-bottom: 16px;
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 12px;
 }
 
 .results-section-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 8px;
   color: var(--text-main);
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 800;
 }
 
@@ -709,62 +788,60 @@ html, body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .reason-item, .guidance-item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 8px;
   background-color: #ffffff;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-light);
 }
 
 .reason-icon {
   color: var(--brand-blue);
-  font-size: 24px;
-  margin-top: 2px;
+  font-size: 20px;
+  margin-top: 1px;
 }
 
 .guidance-icon {
   color: #15803d;
-  font-size: 24px;
-  margin-top: 2px;
+  font-size: 20px;
+  margin-top: 1px;
 }
 
 .reason-text, .guidance-text {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--text-main);
-  line-height: 1.35;
+  line-height: 1.3;
 }
 
-/* Biomechanical Grid */
 .biomech-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
+  gap: 6px;
 }
 
 .biomech-tile {
   background-color: #ffffff;
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: 8px;
+  border-radius: var(--radius-sm);
+  padding: 6px;
   text-align: center;
 }
 
 .biomech-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: var(--text-muted);
-  text-transform: uppercase;
 }
 
 .biomech-val {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: var(--brand-navy);
   margin-top: 2px;
@@ -776,18 +853,17 @@ html, body {
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .history-item {
   background-color: #ffffff;
-  border: 2px solid var(--border-light);
+  border: 1.5px solid var(--border-light);
   border-radius: var(--radius-md);
-  padding: 14px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  gap: 6px;
 }
 
 .history-item-top {
@@ -799,8 +875,8 @@ html, body {
 .history-date {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.95rem;
+  gap: 4px;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-muted);
 }
@@ -808,39 +884,148 @@ html, body {
 .history-tier {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
+  gap: 4px;
+  padding: 2px 8px;
   border-radius: 9999px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 800;
 }
 
 .history-item-details {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-top: 4px;
+  gap: 12px;
 }
 
 .history-detail-chip {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--text-main);
 }
 
 .history-empty {
   text-align: center;
-  padding: 40px 16px;
+  padding: 30px 14px;
   color: var(--text-muted);
 }
 
-.history-empty .material-symbols-outlined {
-  font-size: 48px;
-  color: var(--border-strong);
-  margin-bottom: 8px;
+/* ==========================================================================
+   SCREENER GUIDE MODAL (HOW IT WORKS & ICON LEGEND)
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.75);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.guide-modal-content {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.guide-modal-header {
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--brand-cyan);
+}
+
+.guide-modal-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-close-modal {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.guide-modal-body {
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.guide-qa-box {
+  background-color: #f8fafc;
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.guide-q-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--brand-navy);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.guide-q-desc {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.35;
+}
+
+.icon-legend-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.legend-icon-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: #f1f5f9;
 }
 
 /* Utilities */
@@ -855,16 +1040,16 @@ html, body {
 /* Responsive Landscape Handling */
 @media (orientation: landscape) and (max-height: 550px) {
   .app-header {
-    padding: 6px 12px;
+    padding: 4px 10px;
   }
   .brand-logo-img {
-    height: 32px;
+    height: 24px;
   }
   .screen {
-    padding: 10px 12px 20px;
+    padding: 8px 10px 16px;
   }
   .live-camera-container {
     aspect-ratio: 16 / 9;
-    max-height: 260px;
+    max-height: 240px;
   }
 }
