@@ -53,6 +53,15 @@ const translations = {
     btn_retry_camera: "Retry Camera",
     btn_use_demo: "Try Demo Simulation",
     
+    // MIUI / Android Bubble Overlay Error Guidance
+    miui_overlay_title: "Seeing 'Close Bubbles on Screen' Error?",
+    miui_step_1: "1. Tap the Lock 🔒 or Tune icon in Chrome's address bar",
+    miui_step_2: "2. Tap 'Permissions' > 'Camera' > Select 'Allow'",
+    miui_step_3: "3. Tap 'Retry Camera' below to start",
+    miui_bubble_tip: "Or close any floating chat heads (Messenger, WhatsApp) or MIUI Sidebar in phone Settings.",
+    btn_native_video: "Record Video with Phone Camera",
+    video_processing: "Processing recorded video...",
+    
     // Crucial Camera Angle & Shooting Guide
     shoot_guide_title: "Camera Angle & Shooting Rules",
     shoot_angle_heading: "FILM FROM THE SIDE (Lateral Profile)",
@@ -178,6 +187,15 @@ const translations = {
     btn_retry_camera: "पुनः प्रयास करें",
     btn_use_demo: "डेमो सिमुलेशन चलाएं",
     
+    // MIUI / Android Bubble Overlay Error Guidance
+    miui_overlay_title: "'Close Bubbles on Screen' त्रुटि आ रही है?",
+    miui_step_1: "1. Chrome एड्रेस बार में लॉक 🔒 या ट्यून आइकन पर टैप करें",
+    miui_step_2: "2. 'Permissions' > 'Camera' पर जाकर 'Allow' चुनें",
+    miui_step_3: "3. नीचे दिए गए 'पुनः प्रयास करें' पर टैप करें",
+    miui_bubble_tip: "या फोन सेटिंग्स में फ़्लोटिंग चैट हेड्स (Messenger, WhatsApp) या MIUI साइडबार बंद करें।",
+    btn_native_video: "फ़ोन के कैमरे से वीडियो रिकॉर्ड करें",
+    video_processing: "रिकॉर्ड किया गया वीडियो प्रोसेस हो रहा है...",
+    
     // Crucial Camera Angle & Shooting Guide
     shoot_guide_title: "कैमरा कोण और शूटिंग नियम",
     shoot_angle_heading: "साइड से वीडियो बनाएं (साइड प्रोफाइल)",
@@ -302,6 +320,15 @@ const translations = {
     camera_error_desc: "পিছৰ কেমেৰা লাভ কৰা নগল। ব্ৰাউজাৰৰ অনুমতি পৰীক্ষা কৰক।",
     btn_retry_camera: "পুনৰ চেষ্টা কৰক",
     btn_use_demo: "ডেম’ অনুৰূপ ব্যৱহাৰ কৰক",
+    
+    // MIUI / Android Bubble Overlay Error Guidance
+    miui_overlay_title: "'Close Bubbles on Screen' সমস্যা আহিছে নেকি?",
+    miui_step_1: "1. Chrome এড্ৰেছ বাৰত থকা লক 🔒 বা টিউন চিনত টেপ কৰক",
+    miui_step_2: "2. 'Permissions' > 'Camera' ত গৈ 'Allow' বাছক",
+    miui_step_3: "3. তলত দিয়া 'পুনৰ চেষ্টা কৰক' বুটামত টেপ কৰক",
+    miui_bubble_tip: "বা ফোনৰ ফ্লোটিং চ্যাট হেড (Messenger, WhatsApp) বা MIUI ছাইডবাৰ বন্ধ কৰক।",
+    btn_native_video: "ফোনৰ কেমেৰাৰে ভিডিঅ’ ৰেকৰ্ড কৰক",
+    video_processing: "ৰেকৰ্ড কৰা ভিডিঅ’ প্ৰচেছিং হৈ আছে...",
     
     // Crucial Camera Angle & Shooting Guide
     shoot_guide_title: "কেমেৰা কোণ আৰু নিৰ্দেশনা",

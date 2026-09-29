@@ -296,29 +296,70 @@
 
   function setupMovementListeners() {
     btnEnableCam.addEventListener('click', async () => {
-      btnEnableCam.disabled = true;
       btnEnableCam.textContent = '...';
-      const success = await state.testController.startCamera();
-      btnEnableCam.disabled = false;
-      btnEnableCam.textContent = t('btn_allow_camera');
+      try {
+        const success = await state.testController.startCamera();
+        btnEnableCam.textContent = t('btn_allow_camera');
 
-      if (success) {
-        setMovementStep('instructions');
-        syncCanvasDimensions();
-      } else {
+        if (success) {
+          setMovementStep('instructions');
+          syncCanvasDimensions();
+        } else {
+          setMovementStep('error');
+        }
+      } catch (e) {
+        btnEnableCam.textContent = t('btn_allow_camera');
         setMovementStep('error');
       }
     });
 
     btnRetryCam.addEventListener('click', async () => {
-      const success = await state.testController.startCamera();
-      if (success) {
-        setMovementStep('instructions');
-        syncCanvasDimensions();
-      } else {
+      btnRetryCam.textContent = '...';
+      try {
+        const success = await state.testController.startCamera();
+        btnRetryCam.textContent = t('btn_retry_camera');
+        if (success) {
+          setMovementStep('instructions');
+          syncCanvasDimensions();
+        } else {
+          setMovementStep('error');
+        }
+      } catch (e) {
+        btnRetryCam.textContent = t('btn_retry_camera');
         setMovementStep('error');
       }
     });
+
+    // Native Camera Video Fallback (Bypasses getUserMedia overlay issues completely)
+    const btnNativeVideo = document.getElementById('btn-native-video');
+    const inputNativeVideo = document.getElementById('input-native-video');
+    if (btnNativeVideo && inputNativeVideo) {
+      btnNativeVideo.addEventListener('click', () => {
+        inputNativeVideo.click();
+      });
+
+      inputNativeVideo.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        setMovementStep('live');
+        syncCanvasDimensions();
+
+        liveVideo.srcObject = null;
+        liveVideo.src = URL.createObjectURL(file);
+        liveVideo.playsInline = true;
+        liveVideo.muted = true;
+        
+        try {
+          await liveVideo.play();
+        } catch (playErr) {
+          console.warn('Video play error:', playErr);
+        }
+
+        // Start pose tracking loop on recorded video
+        state.testController.startTest(false);
+      });
+    }
 
     const triggerDemo = () => {
       setMovementStep('live');

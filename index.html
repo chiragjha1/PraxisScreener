@@ -319,7 +319,7 @@
         </div>
       </div>
 
-      <!-- Step 4: Camera Error / Retry -->
+      <!-- Step 4: Camera Error / Retry & MIUI Helper -->
       <div id="movement-step-error" class="movement-step-box hidden">
         <span class="material-symbols-outlined movement-icon-hero" style="color: #b91c1c;">no_photography</span>
         <h2 class="form-label-text" data-i18n="camera_error_title">Camera Access Issue</h2>
@@ -327,16 +327,42 @@
           Could not access the rear camera. Please verify camera permissions in browser settings.
         </p>
 
+        <!-- Dedicated MIUI / Android Bubble Overlay Resolver -->
+        <div class="miui-help-card">
+          <div class="miui-help-title">
+            <span class="material-symbols-outlined" style="color: #b91c1c; font-size: 20px;">bubble_chart</span>
+            <span data-i18n="miui_overlay_title">Seeing 'Close Bubbles on Screen' Error?</span>
+          </div>
+          <ol class="miui-steps-list">
+            <li data-i18n="miui_step_1">1. Tap the Lock 🔒 or Tune icon in Chrome's address bar</li>
+            <li data-i18n="miui_step_2">2. Tap 'Permissions' > 'Camera' > Select 'Allow'</li>
+            <li data-i18n="miui_step_3">3. Tap 'Retry Camera' below to start</li>
+          </ol>
+          <p class="miui-tip-text" data-i18n="miui_bubble_tip">
+            Or close any floating chat heads (Messenger, WhatsApp) or MIUI Sidebar in phone Settings.
+          </p>
+        </div>
+
         <div class="https-notice-box">
           <span class="material-symbols-outlined">lock</span>
           <span data-i18n="camera_https_notice">Camera access requires HTTPS or localhost on mobile phones.</span>
         </div>
+
+        <!-- Hidden Native Camera File Input (Never Blocked by Overlays) -->
+        <input type="file" id="input-native-video" accept="video/*" capture="environment" class="hidden">
 
         <div class="action-bottom-container">
           <button type="button" id="btn-retry-camera" class="btn-primary">
             <span class="material-symbols-outlined">refresh</span>
             <span data-i18n="btn_retry_camera">Retry Camera</span>
           </button>
+          
+          <!-- Native Video Fallback (Bypasses getUserMedia overlay checks completely) -->
+          <button type="button" id="btn-native-video" class="btn-primary" style="background-color: #0c4a6e; margin-top: 8px;">
+            <span class="material-symbols-outlined">video_camera_front</span>
+            <span data-i18n="btn_native_video">Record Video with Phone Camera</span>
+          </button>
+
           <button type="button" id="btn-demo-live" class="btn-secondary">
             <span class="material-symbols-outlined">smart_toy</span>
             <span data-i18n="btn_use_demo">Try Demo Simulation</span>
